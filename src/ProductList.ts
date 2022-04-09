@@ -16,21 +16,36 @@ export class ProductList extends LitElement {
 
   @property({ type: Number }) productsPickedCount = 0;
 
-  @property({type: Boolean}) startPicking = false;
+  @property({ type: Boolean }) isPicking: Boolean = true;
 
-  @property({type: Boolean}) isPicking : Boolean = true;
+  @property({ type: Number }) productsToPickCount: number = 0;
 
+  @property({ type: Array }) filteredProducts: ProductEntity[] = [];
 
   constructor() {
     super();
     this.dataStore = new DataStore();
   }
 
+  computeFilteredProducts() {
+    let _toPick = 0;
+    this.filteredProducts = this.products.reduce((p: ProductEntity[], c: ProductEntity) => {
+
+      if (c.count > 0) _toPick++;
+      if (c.count === 0 && this.isPicking) return p;
+      p.push(c);
+      return p;
+    }, []);
+    this.productsToPickCount = _toPick;
+    console.log(`filtered products: ${JSON.stringify(this.filteredProducts)}`);
+  }
+
   async connectedCallback() {
     super.connectedCallback();
-    let p = await this.dataStore.fetchData();
+    const productEntities = await this.dataStore.fetchData();
     setTimeout(() => {
-      this.products = p;
+      this.products = productEntities;
+      this.computeFilteredProducts();
       this.productsInitialized = true;
     }, 500);
 
@@ -41,41 +56,57 @@ export class ProductList extends LitElement {
       display: flex;
       flex-direction: column;
       flex-wrap: wrap;
+      padding: 0;
     }
   `;
 
   productPickStateListener(e: CustomEvent) {
-    if(e.detail.product.pickState === PickStates.Picked) {
+    if (e.detail.product.pickState === PickStates.Picked) {
       this.productsPickedCount++;
-    }else if(e.detail.product.pickState === PickStates.Unpicked){
+    } else if (e.detail.product.pickState === PickStates.Unpicked) {
       this.productsPickedCount--;
     }
   }
 
-  render() {
-    return html`
-      <p>boodschappenlijst ${this.isPicking}
+  productToPickChangeListener(e: CustomEvent) {
+    e.detail.product!.count === 0 ? this.productsToPickCount-- : this.productsToPickCount++;
+    this.computeFilteredProducts();
+  }
 
+  templateHeader() {
+    return html`
+
+      <p>boodschappenlijst
       ${when(this.productsInitialized, () => {
-      return html`${this.productsPickedCount}/${this.products.length}`;
+      return html`<span>${this.productsPickedCount}/${this.productsToPickCount}</span>`;
     }, () => {
       return '...';
     })}
-
-
       </p>
+    `;
+  }
+
+  render() {
+    return html`
+<div @product-toPickChange="${this.productToPickChangeListener}">
+    ${this.templateHeader()}
+
+
+
        ${when(this.productsInitialized, () => html`
       <ul @product-pickState="${this.productPickStateListener}">
-        ${this.products.map(
+        ${this.filteredProducts.map(
       (item, index) =>
         html`
-              <product-listitem .product=${item}></product-listitem>
+              <product-listitem .product=${item} .isPicking="${this.isPicking}"></product-listitem>
             `
     )}
       </ul>
         `, () => html`loading...`)}
 
+    </div>
     `;
   }
+
 
 }

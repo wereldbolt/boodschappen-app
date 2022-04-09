@@ -61,10 +61,11 @@ export class BoodschappenApp extends LitElement {
     return html`
       <main>
 <!--        <div class="logo"><img alt="open-wc logo" src=${logo} /></div>-->
-        <h1>${this.title} ${this.isPicking}</h1>
-        <label><input id="in-de-winkel" type="checkbox" @click=${this.isPickingListener}>in de winkel</label>
-        <product-list .isPicking="${this.isPicking}"></product-list>
+        <h1>${this.title}</h1>
 
+        <label><input id="in-de-winkel" type="checkbox" @click=${this.isPickingListener}>in de winkel</label>
+
+        <product-list .isPicking="${this.isPicking}"></product-list>
 
       <p class="app-footer">
         Made with love by 🧷

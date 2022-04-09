@@ -28,3 +28,7 @@ npm init @open-wc
 For most of the tools, the configuration is in the `package.json` to reduce the amount of files in your project.
 
 If you customize the configuration a lot, you can consider moving them to individual files.
+
+## Bronnen 
+- Gebruik lit elements in andere frameworks: 
+https://levelup.gitconnected.com/build-a-material-like-input-web-component-using-litelement-20e9e0d203b6
