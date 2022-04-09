@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property , state} from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { ProductEntity, PickStates, ProductCategories } from './DataStore';
 
@@ -10,6 +10,11 @@ export class ProductListItem extends LitElement {
   @property({ type: Number }) pickState: PickStates;
 
   @property({ type: Boolean }) isPicking: Boolean = false;
+
+  @property({type: Boolean}) shouldPick : Boolean = false;
+
+  @state()
+  showItem: Boolean = false;
 
   static styles = css`
 
@@ -22,6 +27,10 @@ export class ProductListItem extends LitElement {
     margin-bottom: 15px;
     border-radius: 5px;
     border: 1px solid gray;
+  }
+
+  li.filterState-hidden{
+    display:none;
   }
 
   li.pickState-${PickStates.Picked}{
@@ -80,8 +89,12 @@ export class ProductListItem extends LitElement {
   constructor() {
     super();
     this.pickState = PickStates.Unpicked;
-
   }
+
+  // connectedCallback() {
+  //   super.connectedCallback();
+  //   // this.showItem = this.product.showItem;
+  // }
 
   setPickState() {
     let nextState: PickStates;
@@ -161,17 +174,10 @@ export class ProductListItem extends LitElement {
 
 
   render() {
-    return html`
-
-${when(this.isPicking && this.product.count === 0, () =>
-      html`
-
-      `
-    , () =>
-      html`
+    if(this.showItem){
+      return html`
       <li class="pickState-${this.pickState} productCategory-${this.product.category}" @click="${this.setPickState}">
       <p>${this.product.name}</p>
-
 
       ${when(this.isPicking, () => {
         },() =>
@@ -186,11 +192,8 @@ ${when(this.isPicking && this.product.count === 0, () =>
 
       )}
 
-      <p>${this.product.count}</p>
-      </li>
-      `
-    )}
-
-    `;
+      <p>${this.product.count} to show: ${this.product.showItem}</p>
+      </li>`
+    }
   }
 }

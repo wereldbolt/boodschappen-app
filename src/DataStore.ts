@@ -81,6 +81,8 @@ export class ProductEntity{
 
   public category: ProductCategories;
 
+  public showItem: Boolean = true;
+
   constructor(product: any) {
     this.id = ++nextProductId;
     this.name = product.name;

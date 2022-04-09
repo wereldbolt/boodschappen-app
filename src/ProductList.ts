@@ -12,7 +12,8 @@ export class ProductList extends LitElement {
 
   @property({ attribute: false }) dataStore: DataStore;
 
-  @property({ type: [ProductEntity] }) products: ProductEntity[] = [];
+  @state()
+  products: ProductEntity[] = [];
 
   @property({ type: Number }) productsPickedCount = 0;
 
@@ -20,19 +21,27 @@ export class ProductList extends LitElement {
 
   @property({ type: Number }) productsToPickCount: number = 0;
 
-  @property({type: Array}) private filteredProducts: ProductEntity[] = [];
-
   constructor() {
     super();
     this.dataStore = new DataStore();
   }
 
+  async connectedCallback() {
+    super.connectedCallback();
+    const productEntities = await this.dataStore.fetchData();
+    console.log('connected');
+    setTimeout(() => {
+      productEntities.forEach(p => this.products.push(p));
+      this.computeFilteredProducts();
+      this.productsInitialized = true;
+    }, 500);
+
+  }
+
   computeFilteredProducts() {
     let _toPick = 0;
-    let categories : ProductCategories[] = [];
 
-
-    // Object.keys(ProductCategories).filter(x => (parseInt(x, 10) >= 0)).map(x => parseInt(x, 10));
+    let categories: ProductCategories[] = [];
 
     this.shadowRoot!.querySelectorAll('#productCategoryFilters input').forEach(n => {
       const m: HTMLInputElement = n as HTMLInputElement;
@@ -43,46 +52,31 @@ export class ProductList extends LitElement {
     });
 
     // @ts-ignore
-    this.filteredProducts = this.products
-      .reduce((p: ProductEntity[], c: ProductEntity) => { //filter aan het winkelen -> product.count > 0
-        if (c.count > 0) _toPick++;
-        if (c.count === 0 && this.isPicking) return p;
-        p.push(c);
-        return p;
-      }, [])
+    this.products.forEach(p => {
 
-    // @ts-ignore
-      .reduce((p: ProductEntity[], c: ProductEntity) => {
+      // to pick
+      if (p.count > 0) _toPick++;
 
-        if(categories.length === 0){
-          p.push(c);
-          return p;
-        }
+      // to show
+      p.showItem = false;
+      if (p.count === 0 && this.isPicking) {
+        return;
+      }
 
-        if(categories.includes(c.category)){
-          p.push(c);
-          return p;
-        }
+      if (categories.length === 0) {
+        p.showItem = true;
+        return;
+      }
 
-        return p;
+      if (categories.includes(p.category)) {
+        p.showItem = true;
+      }
 
-      }, []);
+    });
 
     this.productsToPickCount = _toPick;
-    // console.log(this.productCategoryFilters)
-    console.log(`filtered products: ${JSON.stringify(this.filteredProducts)}`);
-  }
-
-  async connectedCallback() {
-    super.connectedCallback();
-    const productEntities = await this.dataStore.fetchData();
-    console.log('connected')
-    setTimeout(() => {
-      this.products = productEntities;
-      this.computeFilteredProducts();
-      this.productsInitialized = true;
-    }, 500);
-
+    console.log(this.products.filter(p => p.showItem));
+    this.requestUpdate();
   }
 
   static styles = css`
@@ -134,8 +128,6 @@ export class ProductList extends LitElement {
   }
 
   templateFilterCategories() {
-
-
     return html`
 
 <div id="productCategoryFilters">
@@ -148,8 +140,23 @@ export class ProductList extends LitElement {
 
 </div>
 
-
     `;
+  }
+
+  templateProductListItems(){
+    return html`
+    ${when(this.productsInitialized, () => html`
+      <ul @product-pickState="${this.productPickStateListener}">
+
+      ${
+      repeat(
+        this.products,
+        p => p.id,
+        item => html`<product-listitem .product=${item} .showItem=${item.showItem} .isPicking="${this.isPicking}"></product-listitem>`
+      )}
+      </ul>
+        `, () => html`loading...`)}
+    `
   }
 
   render() {
@@ -159,20 +166,7 @@ export class ProductList extends LitElement {
 
     ${this.templateFilterCategories()}
 
-       ${when(this.productsInitialized, () => html`
-      <ul @product-pickState="${this.productPickStateListener}">
-
-
-
-        ${this.filteredProducts.map(
-      (item, index) =>
-        html`
-              <product-listitem .product=${item} .isPicking="${this.isPicking}"></product-listitem>
-            `
-    )}
-      </ul>
-        `, () => html`loading...`)}
-
+       ${this.templateProductListItems()}
     </div>
     `;
   }
