@@ -52,11 +52,11 @@ export class ProductListItem extends LitElement {
 
 
   li.productCategory-${ProductCategories.Fruit}{
-    border-left: 10px solid #e5fa28
+    border-left: 10px solid #ed2d90
   }
 
   li.productCategory-${ProductCategories.Vegetables}{
-    border-left: 10px solid #28fa63
+    border-left: 10px solid #14ba14
   }
 
   li p:first-of-type{

@@ -20,11 +20,39 @@ const products = [
     category: 'zuivel'
   },
   {
-    name: 'tijger brood',
+    name: 'tijgerbrood',
     count: 6,
     category: 'bakkerij'
+  },
+  {
+    name: 'appels',
+    count: 1,
+    category: 'fruit'
+  },
+  {
+    name: 'bananen',
+    count: 3,
+    category: 'fruit'
+  },
+  {
+    name: 'sla',
+    count: 0,
+    category: 'groente'
+  },
+  {
+    name: 'gehakt 1kg',
+    count: 0,
+    category: 'slagerij'
+  },
+  {
+    name: 'afwasmiddel',
+    count: 0,
+    category: 'schoonmaakmiddelen'
   }
+
 ];
+
+let nextProductId = 0;
 
 export enum PickStates {
   Unpicked,
@@ -43,6 +71,8 @@ export enum ProductCategories {
 
 export class ProductEntity{
 
+  public id : number
+
   public name: string
 
   public count: number
@@ -52,6 +82,7 @@ export class ProductEntity{
   public category: ProductCategories;
 
   constructor(product: any) {
+    this.id = ++nextProductId;
     this.name = product.name;
     this.count = product.count;
     this.pickState = product.pickState || PickStates.Unpicked;
@@ -62,6 +93,18 @@ export class ProductEntity{
         break;
       case "bakkerij":
         this.category = ProductCategories.Bakery;
+        break;
+      case "fruit":
+        this.category = ProductCategories.Fruit;
+        break;
+      case "groente":
+        this.category = ProductCategories.Vegetables;
+        break;
+      case "slagerij":
+        this.category = ProductCategories.Butchery;
+        break;
+      case "schoonmaakmiddelen":
+        this.category = ProductCategories.Detergent;
         break;
       default:
         throw new Error(`product category unknown: ${product.category}`);
