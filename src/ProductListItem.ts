@@ -13,6 +13,8 @@ export class ProductListItem extends LitElement {
 
   @property({type: Boolean}) shouldPick : Boolean = false;
 
+  @property({type: Number, attribute: false}) renderCount = 0;
+
   @state()
   showItem: Boolean = false;
 
@@ -71,6 +73,19 @@ export class ProductListItem extends LitElement {
   li p:first-of-type{
     width: 150px;
     display: flex;
+    align-items: center;
+  }
+
+  .productPickCount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid black;
+    width: 25px;
+    height: 25px;
+    font-size: smaller;
+    margin-left: 15px;
   }
 
   .amount-btn-wrapper {
@@ -90,11 +105,6 @@ export class ProductListItem extends LitElement {
     super();
     this.pickState = PickStates.Unpicked;
   }
-
-  // connectedCallback() {
-  //   super.connectedCallback();
-  //   // this.showItem = this.product.showItem;
-  // }
 
   setPickState() {
     let nextState: PickStates;
@@ -174,10 +184,17 @@ export class ProductListItem extends LitElement {
 
 
   render() {
-    if(this.showItem){
+    if(this.product.id === 1) console.log('rendering')
+    if(this.product.id === 1) console.log(this.showItem)
+    if(this.product.id === 1) console.log(this.product.showItem)
+    if(this.product.id === 1) this.renderCount++
+    if(this.product.id === 1) console.log(this.renderCount)
+
+
+    if(this.showItem && !(this.product.count === 0 && this.isPicking)){
       return html`
       <li class="pickState-${this.pickState} productCategory-${this.product.category}" @click="${this.setPickState}">
-      <p>${this.product.name}</p>
+      <p>${this.product.name} <span class="productPickCount">${this.product.count}</span></p>
 
       ${when(this.isPicking, () => {
         },() =>
@@ -192,7 +209,7 @@ export class ProductListItem extends LitElement {
 
       )}
 
-      <p>${this.product.count} to show: ${this.product.showItem}</p>
+      <p>to show: ${this.product.showItem}</p>
       </li>`
     }
   }

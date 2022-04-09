@@ -58,8 +58,8 @@ export class ProductList extends LitElement {
       if (p.count > 0) _toPick++;
 
       // to show
-      p.showItem = false;
       if (p.count === 0 && this.isPicking) {
+        p.showItem = false;
         return;
       }
 
@@ -70,7 +70,10 @@ export class ProductList extends LitElement {
 
       if (categories.includes(p.category)) {
         p.showItem = true;
+        return;
       }
+
+      p.showItem = false;
 
     });
 
@@ -89,6 +92,7 @@ export class ProductList extends LitElement {
 
     #productCategoryFilters{
       display: flex;
+      flex-wrap: wrap;
     }
 
     #productCategoryFilters span{
