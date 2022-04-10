@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { property , state} from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
-import { ProductEntity, PickStates, ProductCategories } from './DataStore';
+import { ProductEntity, PickStates, ProductCategories } from './DataStore.js';
 
 export class ProductListItem extends LitElement {
 

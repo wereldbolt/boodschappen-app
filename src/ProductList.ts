@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { when } from 'lit/directives/when.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { property, state } from 'lit/decorators.js';
-import { DataStore, PickStates, ProductCategories, ProductEntity } from './DataStore';
+import { DataStore, PickStates, ProductCategories, ProductEntity } from './DataStore.js';
 
 const logo = new URL('../../assets/open-wc-logo.svg', import.meta.url).href;
 
