@@ -65,7 +65,7 @@ export class BoodschappenApp extends LitElement {
 
         <label><input id="in-de-winkel" type="checkbox" @click=${this.isPickingListener}>in de winkel</label>
 
-        <product-list .isPicking="${this.isPicking}"></product-list>
+
 
       <p class="app-footer">
         Made with love by 🧷
