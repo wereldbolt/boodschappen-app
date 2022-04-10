@@ -3,7 +3,7 @@
   "description": "Webcomponent boodschappen-app following open-wc recommendations",
   "license": "MIT",
   "author": "boodschappen-app",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "lint": "eslint --ext .ts,.html . --ignore-path .gitignore && prettier \"**/*.ts\" --check --ignore-path .gitignore",
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
-    "@custom-elements-manifest/analyzer": "^0.4.17",
+    "@custom-elements-manifest/analyzer": "0.4.17",
     "@open-wc/building-rollup": "^2.0.1",
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "next",
